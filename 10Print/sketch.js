@@ -1,20 +1,18 @@
-var grid;
-var capacity;
-var resolution;
-var side=30;
 
-var w=601;
-var h=601;
-//make this configurable
-var rows=(w-1)/side;
-var cols=(h-1)/side;
-var playerNum=2;
-var currentPlayer=1;
+let spacing=200;
+let x=0;
+let y=0;
+let grid;
+var w;
+var h;
+var rows;
+var cols;
+var step;
+var c;
+var r;
+var g;
+var b;
 
-var transX=400;
-var transY=100;
-
-var colors;
 
 function make2DArray(rows,columns,val){
 	var arr=new Array(rows);
@@ -27,181 +25,121 @@ function make2DArray(rows,columns,val){
 
 	return arr;
 }
-function make2DArrayWithCells(rows,columns,val){
-	var arr=new Array(rows);
-	for(var i=0;i<rows;i++){
-		arr[i]=new Array(columns);
-		for (var j = 0; j < columns; j++) {
-			//arr[i][j]=new Cell(floor(random(1,4)),floor(random(1,playerNum+1)));
-			arr[i][j]=new Cell(0,0);
-			if(arr[i][j].val>=capacity[i][j])
-			arr[i][j].val=capacity[i][j]-1;
-		}
-	}
 
-	return arr;
-}
 function setup() {
-	createCanvas(w+900, h+400);
+	createCanvas(windowWidth, windowHeight);
+	w=windowWidth;
+	h=windowHeight;
+	rows=floor((w)/spacing);
+	cols=floor((h)/spacing);
+	grid=make2DArray(rows,cols,0);
+	step=spacing/2;
+	c=floor(map(random(4),0,4,0,255));
 
-	capacity=make2DArray(rows,cols,0);
-	for(var i=0;i<rows;i++){
-		for (var j = 0; j < cols; j++) {
-			capacity[i][j]=countNeighbors(i,j);
-		}
-	}
+	 r=floor((200-c)%255);
+	 g=floor((c-50)%255);
+	 b=floor((c-70)%255);
 
-	grid=make2DArrayWithCells(rows,cols,0);
-
-	colors=new Array(playerNum+1);
-	colors[0]=color(0);
-	for(var i=1;i<=playerNum;i++)
-		colors[i]=color(floor(random(0,255)),floor(random(0,255)),floor(random(0,255)));
-	/*colors={
-	0 : color(0),
-	1 : color(0,0,255),
-	2 : color(200),
-	3 : color(0,255,255),
-	3 : color(0,255,255),
-	3 : color(0,255,255),
-
-}
-};*/
+	 r=floor(random(255));
+	 g=floor(random(255));
+	 b=floor(random(255));
+	background(0);
 }
 
 function draw() {
-	background(0);
+	var val=random(1);
 
-	translate(transX,transY);
-	for(var i=0;i<w-1;i=i+side){
-		for (var j = 0; j < h-1; j=j+side) {
-			stroke(colors[currentPlayer]);
+	strokeWeight(3);
+	noFill();
 
-			var ci=i+side/2;
-			var cj=j+side/2;
-			var cell=grid[i/side][j/side];
-			noFill();
-			rect(i,j,side,side);
+	console.log(val);
+	// if(val>=0 && val<=0.25)
+	// {
+	// 	for(var i=0;i<=spacing;i+=step)
+	// 	{
+	// 		stroke(r,g-i*10,b+i);
+	// 		line(x,y+i,x+spacing,y+i);
+	// 	}
+	// }
+	// else if(val>0.25 && val<=0.5)
+	// {
+	// 	for(var i=0;(spacing*2-i)>0;i+=step)
+	// 	{
+	// 		stroke(r,g-i*10,b+i);
+	// 		arc(x,y,(spacing*2)-(i),(spacing*2)-(i),0,HALF_PI)
+	// 		//line(x,y+i,x+spacing,y+i);
+	// 	}
+	// }
+	// else if(val>0.5 && val<=0.75)
+	// {
+	// 	for(var i=0;(spacing*2-i)>0;i+=step)
+	// 	{
+	// 		stroke(r,g-i*10,b+i);
+	// 		arc(x+spacing,y+spacing,(spacing*2)-(i),(spacing*2)-(i),-PI,-HALF_PI)
+	// 		//line(x,y+i,x+spacing,y+i);
+	// 	}
+	// }
+	// else if(val>0.75)
+	// {
+	// 	for(var i=0;i<=spacing;i+=step)
+	// 	{
+	// 		stroke(r,g-i*10,b+i);
+	// 		line(x+i,y,x+i,y+spacing);
+	// 	//	arc(x+spacing,y+spacing,(spacing*2)-(i),(spacing*2)-(i),-PI,-HALF_PI)
+	// 		//line(x,y+i,x+spacing,y+i);
+	// 	}
+	// }
 
-		//	console.log(cell.val+" "+cell.player);
 
-			fill(getColor("color",cell.player));
-			stroke(color(0));
-			var offset=floor(random(-1,1));
+	// if(val>0.5){
+	// 	//arcs
+	// 	//arc(x,y,spacing,spacing,-HALF_PI,PI)
+	//
+	// 	//lines
+	// 	line(x,y,x+spacing,y+spacing)
+	// }
+	// else{
+	// 	//lines
+	// 	line(x,y+spacing,x+spacing,y)
+	//
+	// 	//arcs
+	// 	//arc(x,y,spacing,spacing,0,-HALF_PI);
+	//
+	//
+	// }
 
-			if(cell.val==1)
-			{
-				if(!(capacity[i/side][j/side]==2))
-				offset=0;
 
-				ellipse(ci+offset,cj+offset,side/2,side/2);
-			}
-			if(cell.val==2)
-			{
-				if(!(capacity[i/side][j/side]==3))
-				offset=0;
-
-				ellipse(ci-5+offset,cj-5+offset,side/2,side/2);
-				ellipse(ci+5+offset,cj+5+offset,side/2,side/2);
-			}
-			if(cell.val==3)
-			{
-				if(!(capacity[i/side][j/side]==4))
-				offset=0;
-
-				ellipse(ci+5+offset,cj+5+offset,side/2,side/2);
-				ellipse(ci-5+offset,cj+5+offset,side/2,side/2);
-				ellipse(ci+offset,cj-5+offset,side/2,side/2);
-			}
-
-			fill(0);
-			stroke(0);
-			if(cell.val!=0){
-				//text(cell.val,i+side/3,j+side/2+5);
-			}
-
-		}
-	}
-}
-
-function getColor(val, player){
-	//console.log(colors);
-	return colors[player];
-
-}
-function mousePressed(){
-
-	var x=floor((mouseX-transX)/side);
-	var y=floor((mouseY-transY)/side);
-
-	console.log(x+" "+y);
-	if(x<=rows-1 && y<=cols-1)
+	if(val<0.4)
 	{
-		console.log(grid[x][y]);
-		if(grid[x][y].val==0 || (grid[x][y].val>0 && grid[x][y].player==currentPlayer))
+		for(var i=0;(spacing*2-i)>0;i+=step)
 		{
-			updateGrid(x,y,currentPlayer);
-			currentPlayer= currentPlayer+1;
-			if(currentPlayer>playerNum)
-				currentPlayer=1;
-			console.log("Current Player = "+currentPlayer);
+			stroke(r,g-i*10,b-i);
+			arc(x,y,(spacing*2)-(i),(spacing*2)-(i),0,HALF_PI)
+			//line(x,y+i,x+spacing,y+i);
+		}
+	}
+	else
+	{
+		for(var i=0;(spacing*2-i)>0;i+=step)
+		{
+			stroke(r,g-i*10,b-i);
+			arc(x+spacing,y+spacing,(spacing*2)-(i),(spacing*2)-(i),-PI,-HALF_PI)
+			//line(x,y+i,x+spacing,y+i);
 		}
 	}
 
-
-
-}
-function countNeighbors(i,j){
-
-	var neighbors=0;
-
-	if(i!=0)
-	neighbors++;
-	if(j!=0)
-	neighbors++;
-	if(i!=rows-1)
-	neighbors++;
-	if(j!=cols-1)
-	neighbors++;
-
-	return neighbors;
-}
-
-function updateGrid(i,j,p){
-
-	var neighbors=capacity[i][j];
-	console.log("Updating:"+i+" "+j+", n="+neighbors);
-
-	var cell=grid[i][j];
-	var cellValue=cell.val;
-
-	if(cellValue<neighbors-1){
-
-		grid[i][j].val++;
-		grid[i][j].player=p;
-
-		return;
-	}
-	else if (cellValue == neighbors-1)
+	x=x+spacing;
+	if(x>windowWidth)
 	{
-		grid[i][j].val=0;
-		grid[i][j].player=0;
-		if(i!=0)
-		updateGrid(i-1,j,p);
-
-		if(j!=0)
-		updateGrid(i,j-1,p);
-
-		if(i!=rows-1)
-		updateGrid(i+1,j,p);
-
-		if(j!=cols-1)
-		updateGrid(i,j+1,p);
-
-		return;
+		x=0;
+		y+=spacing;
 	}
-	else{
-		return;
+
+	if(y>windowHeight)
+	{
+		x=0;
+		y=0;
+		noLoop();
 	}
 
 }
