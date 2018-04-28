@@ -1,5 +1,5 @@
 
-let spacing=200;
+let spacing=50;
 let x=0;
 let y=0;
 let grid;
